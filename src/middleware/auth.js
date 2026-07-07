@@ -2,6 +2,7 @@
 
 const crypto = require('crypto');
 const { config } = require('../config/constants');
+const { logger } = require('../logger');
 
 if (process.env.NODE_ENV === 'production' && !config.clientApiKey) {
   throw new Error(
@@ -38,6 +39,8 @@ function authMiddleware(req, res, next) {
       : '';
 
     if (!safeStringEqual(provided, config.clientApiKey)) {
+      const prefix = provided ? `${provided.slice(0, 4)}…` : 'missing';
+      logger.warn(`auth rejected from ${req.ip} (key=${prefix})`);
       return res.status(401).json({
         error: {
           message: 'Invalid or missing API key.',

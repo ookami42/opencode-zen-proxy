@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const { config } = require('./config/constants');
 const { authMiddleware } = require('./middleware/auth');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const { requestLogger } = require('./middleware/requestLogger');
 const healthRoutes = require('./routes/health');
 const modelsRoutes = require('./routes/models');
 const chatRoutes = require('./routes/chatCompletions');
@@ -47,6 +48,7 @@ function createApp() {
     maxAge: 86400,
   }));
   app.use(express.json({ limit: '1mb' }));
+  app.use(requestLogger);
 
   // ----- Open Routes (no auth required) -----
   app.use('/', healthRoutes);

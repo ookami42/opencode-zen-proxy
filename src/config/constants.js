@@ -40,6 +40,12 @@ const config = {
 
   // Logging (debug | info | warn | error)
   logLevel: process.env.LOG_LEVEL || 'info',
+
+  // Log Render health-check pings? Default false (polls every ~15s).
+  logHealthChecks: process.env.LOG_HEALTH_CHECKS === 'true',
+
+  // Include model name and streaming flag in chat request logs.
+  logRequestMeta: process.env.LOG_REQUEST_META !== 'false',
 };
 
 module.exports = { config };
