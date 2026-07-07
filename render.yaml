@@ -20,5 +20,11 @@ services:
         value: "60000"
       - key: RATE_LIMIT_MAX
         value: "60"
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: NODE_ENV
+        value: production
       - key: CLIENT_API_KEY
         sync: false

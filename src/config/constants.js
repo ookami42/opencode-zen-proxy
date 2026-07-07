@@ -27,6 +27,13 @@ const config = {
   // "xhigh" maximizes chain-of-thought length. Set via env to override.
   defaultReasoningEffort: process.env.DEFAULT_REASONING_EFFORT || 'xhigh',
 
+  // CORS origin allowlist (defaults to '*' — safe when gated by CLIENT_API_KEY).
+  // Set to a comma-separated list like "https://app.example.com,https://api.example.com".
+  corsOrigin: process.env.CORS_ORIGIN || '*',
+
+  // Trust proxy hop (Render: 1, nginx + Render: 2). Needed for rate-limit per real-IP.
+  trustProxy: process.env.TRUST_PROXY || '1',
+
   // Rate limiting (applied to /v1 routes)
   rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60000,
   rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX, 10) || 60,

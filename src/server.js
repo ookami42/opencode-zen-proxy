@@ -32,9 +32,20 @@ const limiter = rateLimit({
 function createApp() {
   const app = express();
 
+  app.set('trust proxy', config.trustProxy || '1');
+
   // ----- Global Middleware -----
-  app.use(helmet());
-  app.use(cors());
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  }));
+  app.use(cors({
+    origin: config.corsOrigin || '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400,
+  }));
   app.use(express.json({ limit: '10mb' }));
 
   // ----- Open Routes (no auth required) -----

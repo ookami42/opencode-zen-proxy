@@ -1,6 +1,22 @@
 'use strict';
 
+const crypto = require('crypto');
 const { config } = require('../config/constants');
+
+if (process.env.NODE_ENV === 'production' && !config.clientApiKey) {
+  throw new Error(
+    'FATAL: CLIENT_API_KEY must be set when NODE_ENV=production. ' +
+    'Add it as a secret in the Render dashboard.'
+  );
+}
+
+function safeStringEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ab, bb);
+}
 
 /**
  * Authentication middleware.
@@ -21,7 +37,7 @@ function authMiddleware(req, res, next) {
       ? authHeader.replace('Bearer ', '').trim()
       : '';
 
-    if (provided !== config.clientApiKey) {
+    if (!safeStringEqual(provided, config.clientApiKey)) {
       return res.status(401).json({
         error: {
           message: 'Invalid or missing API key.',
