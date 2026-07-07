@@ -7,7 +7,7 @@ const router = express.Router();
 
 const MAX_MESSAGES = 100;
 const MAX_CONTENT_CHARS = 16 * 1024;
-const MAX_OUTPUT_TOKENS = 8192;
+const MAX_OUTPUT_TOKENS = 32768;
 
 function validatePayload(payload, errors) {
   if (Array.isArray(payload.messages) && payload.messages.length > MAX_MESSAGES) {
