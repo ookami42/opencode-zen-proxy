@@ -38,6 +38,10 @@ const config = {
   rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60000,
   rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX, 10) || 60,
 
+  // Hard limits (server-enforced; upstream Zen enforces its own model-specific caps)
+  maxContentChars: parseInt(process.env.MAX_CONTENT_CHARS, 10) || 131072,
+  maxOutputTokens: parseInt(process.env.MAX_OUTPUT_TOKENS, 10) || 131072,
+
   // Logging (debug | info | warn | error)
   logLevel: process.env.LOG_LEVEL || 'info',
 

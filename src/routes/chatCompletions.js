@@ -2,12 +2,11 @@
 
 const express = require('express');
 const zen = require('../services/zenClient');
+const { config } = require('../config/constants');
 
 const router = express.Router();
 
 const MAX_MESSAGES = 100;
-const MAX_CONTENT_CHARS = 16 * 1024;
-const MAX_OUTPUT_TOKENS = 32768;
 
 function validatePayload(payload, errors) {
   if (Array.isArray(payload.messages) && payload.messages.length > MAX_MESSAGES) {
@@ -17,21 +16,21 @@ function validatePayload(payload, errors) {
     for (const m of payload.messages) {
       const c = m && m.content;
       if (typeof c === 'string') {
-        if (c.length > MAX_CONTENT_CHARS) { errors.push('message content too long'); break; }
+        if (c.length > config.maxContentChars) { errors.push('message content too long'); break; }
       } else if (Array.isArray(c)) {
         let total = 0;
         for (const part of c) {
           if (part && typeof part.text === 'string') total += part.text.length;
         }
-        if (total > MAX_CONTENT_CHARS) { errors.push('message content too long'); break; }
+        if (total > config.maxContentChars) { errors.push('message content too long'); break; }
       }
     }
   }
   if (payload.temperature !== undefined && (typeof payload.temperature !== 'number' || payload.temperature < 0 || payload.temperature > 2)) {
     errors.push('temperature must be in [0,2]');
   }
-  if (payload.max_tokens !== undefined && (typeof payload.max_tokens !== 'number' || payload.max_tokens < 1 || payload.max_tokens > MAX_OUTPUT_TOKENS)) {
-    errors.push(`max_tokens must be in [1,${MAX_OUTPUT_TOKENS}]`);
+  if (payload.max_tokens !== undefined && (typeof payload.max_tokens !== 'number' || payload.max_tokens < 1 || payload.max_tokens > config.maxOutputTokens)) {
+    errors.push(`max_tokens must be in [1,${config.maxOutputTokens}]`);
   }
   if (payload.n !== undefined && payload.n !== 1) {
     errors.push('only n=1 is supported');
