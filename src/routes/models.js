@@ -52,6 +52,8 @@ router.get('/models/free', (_req, res) => {
   res.json({ object: 'list', data });
 });
 
+const ID_RE = /^[A-Za-z0-9_.\-\/]{1,128}$/;
+
 /**
  * GET /v1/models/:modelId
  *
@@ -59,14 +61,24 @@ router.get('/models/free', (_req, res) => {
  * contain slashes, e.g. "opencode/deepseek-v4-flash-free".
  */
 router.get('/models/:modelId(*)', (req, res) => {
-  const modelId = req.params.modelId;
-  const canonicalId = resolveModelId(modelId);
+  const raw = req.params.modelId;
+  if (!ID_RE.test(raw)) {
+    return res.status(400).json({
+      error: {
+        message: 'Invalid model identifier.',
+        type: 'invalid_request_error',
+        code: 'invalid_model_id',
+      },
+    });
+  }
+
+  const canonicalId = resolveModelId(raw);
   const model = getModelInfo(canonicalId);
 
   if (!model) {
     return res.status(404).json({
       error: {
-        message: `Model '${modelId}' not found.`,
+        message: `Model '${raw}' not found.`,
         type: 'invalid_request_error',
         param: null,
         code: 'model_not_found',

@@ -10,14 +10,14 @@ function errorHandler(err, req, res, _next) {
   logger.error(`${err.message}`, err.stack || '');
 
   const statusCode = err.statusCode || 500;
-  const type = statusCode >= 500 ? 'server_error' : 'invalid_request_error';
+  const isServerError = statusCode >= 500;
 
   res.status(statusCode).json({
     error: {
-      message: err.message || 'An unexpected error occurred.',
-      type,
+      message: isServerError ? 'Internal server error.' : (err.message || 'Invalid request.'),
+      type: isServerError ? 'server_error' : (err.type || 'invalid_request_error'),
       param: err.param || null,
-      code: err.code || 'internal_error',
+      code: err.code || (isServerError ? 'internal_error' : 'invalid_request'),
     },
   });
 }

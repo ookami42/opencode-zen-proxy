@@ -46,7 +46,7 @@ function createApp() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     maxAge: 86400,
   }));
-  app.use(express.json({ limit: '10mb' }));
+  app.use(express.json({ limit: '1mb' }));
 
   // ----- Open Routes (no auth required) -----
   app.use('/', healthRoutes);
