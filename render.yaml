@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: opencode-zen-proxy
+    runtime: node
+    plan: free
+    buildCommand: pnpm install --frozen-lockfile --prod
+    startCommand: node src/index.js
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: ZEN_API_BASE_URL
+        value: https://opencode.ai/zen/v1
+      - key: ZEN_API_KEY
+        value: public
+      - key: DEFAULT_REASONING_EFFORT
+        value: xhigh
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "60000"
+      - key: RATE_LIMIT_MAX
+        value: "60"
+      - key: CLIENT_API_KEY
+        sync: false

@@ -2,12 +2,29 @@
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
+const { config } = require('./config/constants');
 const { authMiddleware } = require('./middleware/auth');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const healthRoutes = require('./routes/health');
 const modelsRoutes = require('./routes/models');
 const chatRoutes = require('./routes/chatCompletions');
+
+const limiter = rateLimit({
+  windowMs: config.rateLimitWindowMs,
+  max: config.rateLimitMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: {
+      message: 'Too many requests. Please try again later.',
+      type: 'rate_limit_error',
+      code: 'rate_limit_exceeded',
+    },
+  },
+});
 
 /**
  * Create and configure the Express application.
@@ -16,6 +33,7 @@ function createApp() {
   const app = express();
 
   // ----- Global Middleware -----
+  app.use(helmet());
   app.use(cors());
   app.use(express.json({ limit: '10mb' }));
 
@@ -23,7 +41,7 @@ function createApp() {
   app.use('/', healthRoutes);
 
   // ----- Authenticated Routes -----
-  // Apply auth middleware to all /v1/* routes
+  app.use('/v1', limiter);
   app.use('/v1', authMiddleware);
 
   // Model listing endpoints (require auth per Zen API convention)

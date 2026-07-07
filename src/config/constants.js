@@ -27,7 +27,11 @@ const config = {
   // "xhigh" maximizes chain-of-thought length. Set via env to override.
   defaultReasoningEffort: process.env.DEFAULT_REASONING_EFFORT || 'xhigh',
 
-  // Logging
+  // Rate limiting (applied to /v1 routes)
+  rateLimitWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60000,
+  rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX, 10) || 60,
+
+  // Logging (debug | info | warn | error)
   logLevel: process.env.LOG_LEVEL || 'info',
 };
 

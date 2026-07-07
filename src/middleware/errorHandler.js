@@ -1,11 +1,13 @@
 'use strict';
 
+const { logger } = require('../logger');
+
 /**
  * Global error handler middleware.
  * Catches errors and returns them in OpenAI-compatible format.
  */
 function errorHandler(err, req, res, _next) {
-  console.error(`[ERROR] ${err.message}`, err.stack || '');
+  logger.error(`${err.message}`, err.stack || '');
 
   const statusCode = err.statusCode || 500;
   const type = statusCode >= 500 ? 'server_error' : 'invalid_request_error';
